@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaazGram</title>
+<style>
+  body{
+    margin:0;
+    font-family: Arial;
+    background:#000;
+    color:#fff;
+  }
+  .header{
+    background:#000;
+    padding:15px;
+    text-align:center;
+    font-size:20px;
+    border-bottom:1px solid #222;
+    position: sticky;
+    top:0;
+    z-index: 10;
+  }
+  .tabs{
+    display:flex;
+    justify-content:space-around;
+    background:#000;
+    border-bottom:1px solid #222;
+  }
+  .tabs button{
+    flex:1;
+    padding:12px;
+    background:none;
+    color:#fff;
+    border:none;
+    font-size:16px;
+  }
+  .tabs button.active{
+    border-bottom:3px solid #fff;
+  }
+
+  /* Home */
+  .home{display:none; padding:10px;}
+  .stories{
+    display:flex;
+    overflow-x:auto;
+    gap:10px;
+    padding:10px 0;
+  }
+  .story{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:3px solid #ff0066;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+  }
+  .posts{margin-top:10px;}
+  .post{
+    background:#111;
+    margin-bottom:10px;
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .post img{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+  }
+  .post .info{padding:10px;}
+
+  /* Search */
+  .search{display:none; padding:10px;}
+  .search input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+  }
+  .searchGrid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:2px;
+    margin-top:10px;
+  }
+  .searchGrid video{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+  }
+
+  /* Reels */
+  .reels{
+    display:none;
+    height:calc(100vh - 120px);
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+  }
+  .reel{
+    height:100vh;
+    scroll-snap-align:start;
+    position:relative;
+  }
+  .reel video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .icons{
+    position:absolute;
+    right:10px;
+    bottom:120px;
+    text-align:center;
+    font-size:22px;
+  }
+  .icons div{margin:15px 0;}
+
+  /* Profile */
+  .profile{display:none; padding:20px;}
+  .profile .box{
+    background:#111;
+    padding:15px;
+    border-radius:10px;
+  }
+  .profile h2{margin:0;}
+  .profile p{color:#aaa;}
+
+  ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+
+<body>
+
+<div class="header">📸 MaazGram</div>
+
+<div class="tabs">
+  <button id="homeBtn" class="active" onclick="showHome()">Home</button>
+  <button id="searchBtn" onclick="showSearch()">Search</button>
+  <button id="reelsBtn" onclick="showReels()">Reels</button>
+  <button id="profileBtn" onclick="showProfile()">Profile</button>
+</div>
+
+<!-- HOME -->
+<div class="home" id="home">
+  <div class="stories">
+    <div class="story">A</div>
+    <div class="story">B</div>
+    <div class="story">C</div>
+    <div class="story">D</div>
+    <div class="story">E</div>
+    <div class="story">F</div>
+    <div class="story">G</div>
+    <div class="story">H</div>
+  </div>
+
+  <div class="posts" id="posts"></div>
+</div>
+
+<!-- SEARCH -->
+<div class="search" id="search">
+  <input type="text" id="searchInput" placeholder="Search reels..." onkeyup="filterSearch()">
+  <div class="searchGrid" id="searchGrid"></div>
+</div>
+
+<!-- REELS -->
+<div class="reels" id="reels"></div>
+
+<!-- PROFILE -->
+<div class="profile" id="profile">
+  <div class="box">
+    <h2>Maaz</h2>
+    <p>Username: @maaz</p>
+    <p>Followers: 12.5k</p>
+    <p>Following: 320</p>
+    <p>Posts: 120</p>
+  </div>
+</div>
+
+<script>
+  const videos = [
+    "https://www.w3schools.com/html/mov_bbb.mp4",
+    "https://www.w3schools.com/html/movie.mp4",
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+  ];
+
+  function loadPosts(){
+    const posts = document.getElementById("posts");
+    posts.innerHTML = "";
+    for(let i=1; i<=12; i++){
+      posts.innerHTML += `
+        <div class="post">
+          <img src="https://placekitten.com/50${i}/50${i}">
+          <div class="info">
+            <b>Maaz</b> • Post ${i}
+            <p style="margin:5px 0; color:#aaa;">This is a sample post description.</p>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function loadReels(){
+    const reelsDiv = document.getElementById("reels");
+    reelsDiv.innerHTML = "";
+    for(let i=0; i<50; i++){
+      reelsDiv.innerHTML += `
+        <div class="reel">
+          <video autoplay muted loop playsinline>
+            <source src="${videos[i % videos.length]}" type="video/mp4">
+          </video>
+          <div class="icons">
+            ❤<br>1.${i}k<br><br>
+            💬<br>${i*2}<br><br>
+            ↗
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function loadSearchReels(){
+    const grid = document.getElementById("searchGrid");
+    grid.innerHTML = "";
+    for(let i=0; i<100; i++){
+      grid.innerHTML += `
+        <video class="searchVideo" data-title="reel ${i}" autoplay muted loop playsinline>
+          <source src="${videos[i % videos.length]}" type="video/mp4">
+        </video>
+      `;
+    }
+  }
+
+  function filterSearch(){
+    const val = document.getElementById("searchInput").value.toLowerCase();
+    document.querySelectorAll(".searchVideo").forEach(v => {
+      v.style.display = v.dataset.title.includes(val) ? "block" : "none";
+    });
+  }
+
+  function hideAll(){
+    document.getElementById("home").style.display="none";
+    document.getElementById("search").style.display="none";
+    document.getElementById("reels").style.display="none";
+    document.getElementById("profile").style.display="none";
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+  }
+
+  function showHome(){
+    hideAll();
+    document.getElementById("home").style.display="block";
+    document.getElementById("homeBtn").classList.add("active");
+  }
+  function showSearch(){
+    hideAll();
+    document.getElementById("search").style.display="block";
+    document.getElementById("searchBtn").classList.add("active");
+  }
+  function showReels(){
+    hideAll();
+    document.getElementById("reels").style.display="block";
+    document.getElementById("reelsBtn").classList.add("active");
+  }
+  function showProfile(){
+    hideAll();
+    document.getElementById("profile").style.display="block";
+    document.getElementById("profileBtn").classList.add("active");
+  }
+
+  loadPosts();
+  loadReels();
+  loadSearchReels();
+  showHome();
+</script>
+
+</body>
+</html>
